@@ -1,5 +1,8 @@
 package immutabilitybenchmarking
 
+const MatrixWidth int = 50
+const MatrixHeight int = 50
+
 type Matrix interface {
 	Width() int
 	Height() int

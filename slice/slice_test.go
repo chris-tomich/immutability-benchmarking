@@ -74,10 +74,10 @@ func MatrixRunner(b *testing.B, g MatrixGenerator, totalMatrices int) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < totalMatrices; j++ {
-			mm1[j].Add(mm2[j])
-			mm1[j].ScalarMultiply(3)
-			mm1[j].MatrixMultiply(mm2[j])
-			mm1[j].Subtract(mm2[j])
+			mm1[j], _ = mm1[j].Add(mm2[j])
+			mm1[j] = mm1[j].ScalarMultiply(3)
+			mm1[j], _ = mm1[j].MatrixMultiply(mm2[j])
+			mm1[j], _ = mm1[j].Subtract(mm2[j])
 		}
 	}
 }
