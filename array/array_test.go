@@ -44,7 +44,7 @@ func (ImmutableMatrixGenerator) GenerateMatrix() (immutabilitybenchmarking.Matri
 	return immutable.New(m1), immutable.New(m2)
 }
 
-func MatrixRunner(b *testing.B, g MatrixGenerator, totalMatrices int) {
+func MatrixAddRunner(b *testing.B, g MatrixGenerator, totalMatrices int) {
 	mm1 := make([]immutabilitybenchmarking.Matrix, totalMatrices)
 	mm2 := make([]immutabilitybenchmarking.Matrix, totalMatrices)
 
@@ -56,19 +56,94 @@ func MatrixRunner(b *testing.B, g MatrixGenerator, totalMatrices int) {
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < totalMatrices; j++ {
 			mm1[j], _ = mm1[j].Add(mm2[j])
+		}
+	}
+}
+
+func MatrixScalarRunner(b *testing.B, g MatrixGenerator, totalMatrices int) {
+	mm1 := make([]immutabilitybenchmarking.Matrix, totalMatrices)
+	mm2 := make([]immutabilitybenchmarking.Matrix, totalMatrices)
+
+	for i := 0; i < totalMatrices; i++ {
+		mm1[i], mm2[i] = g.GenerateMatrix()
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		for j := 0; j < totalMatrices; j++ {
 			mm1[j] = mm1[j].ScalarMultiply(3)
+		}
+	}
+}
+
+func MatrixMultiplyRunner(b *testing.B, g MatrixGenerator, totalMatrices int) {
+	mm1 := make([]immutabilitybenchmarking.Matrix, totalMatrices)
+	mm2 := make([]immutabilitybenchmarking.Matrix, totalMatrices)
+
+	for i := 0; i < totalMatrices; i++ {
+		mm1[i], mm2[i] = g.GenerateMatrix()
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		for j := 0; j < totalMatrices; j++ {
 			mm1[j], _ = mm1[j].MatrixMultiply(mm2[j])
+		}
+	}
+}
+
+func MatrixSubtractRunner(b *testing.B, g MatrixGenerator, totalMatrices int) {
+	mm1 := make([]immutabilitybenchmarking.Matrix, totalMatrices)
+	mm2 := make([]immutabilitybenchmarking.Matrix, totalMatrices)
+
+	for i := 0; i < totalMatrices; i++ {
+		mm1[i], mm2[i] = g.GenerateMatrix()
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		for j := 0; j < totalMatrices; j++ {
 			mm1[j], _ = mm1[j].Subtract(mm2[j])
 		}
 	}
 }
 
-func BenchmarkMutableMatrix(b *testing.B) {
+func BenchmarkMutableMatrixAdd(b *testing.B) {
 	g := MutableMatrixGenerator{}
-	MatrixRunner(b, g, 10)
+	MatrixAddRunner(b, g, 10)
 }
 
-func BenchmarkImmutableMatrix(b *testing.B) {
+func BenchmarkImmutableMatrixAdd(b *testing.B) {
 	g := ImmutableMatrixGenerator{}
-	MatrixRunner(b, g, 10)
+	MatrixAddRunner(b, g, 10)
+}
+
+func BenchmarkMutableMatrixScalar(b *testing.B) {
+	g := MutableMatrixGenerator{}
+	MatrixScalarRunner(b, g, 10)
+}
+
+func BenchmarkImmutableMatrixScalar(b *testing.B) {
+	g := ImmutableMatrixGenerator{}
+	MatrixScalarRunner(b, g, 10)
+}
+
+func BenchmarkMutableMatrixMultiply(b *testing.B) {
+	g := MutableMatrixGenerator{}
+	MatrixMultiplyRunner(b, g, 10)
+}
+
+func BenchmarkImmutableMatrixMultiply(b *testing.B) {
+	g := ImmutableMatrixGenerator{}
+	MatrixMultiplyRunner(b, g, 10)
+}
+
+func BenchmarkMutableMatrixSubtract(b *testing.B) {
+	g := MutableMatrixGenerator{}
+	MatrixSubtractRunner(b, g, 10)
+}
+
+func BenchmarkImmutableMatrixSubtract(b *testing.B) {
+	g := ImmutableMatrixGenerator{}
+	MatrixSubtractRunner(b, g, 10)
 }
